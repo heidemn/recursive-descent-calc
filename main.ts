@@ -76,13 +76,20 @@ function factor(): number {
     }
 }
 
-function term(): number {
+function factorWithPow(): number {
     let v = factor();
-    while (sym.type == 'mul' || sym.type == 'div' || sym.type == 'pow') {
+    while (sym.type == 'pow') {
         nextSym();
-        if (prevSym.type === 'pow') {
-            v = Math.pow(v, term()); // TODO: Should have precedence over * and /.
-        } else if (prevSym.type === 'mul') {
+        v = Math.pow(v, factorWithPow());
+    }
+    return v;
+}
+
+function term(): number {
+    let v = factorWithPow();
+    while (sym.type == 'mul' || sym.type == 'div') {
+        nextSym();
+        if (prevSym.type === 'mul') {
             v *= term();
         } else {
             v /= term();
