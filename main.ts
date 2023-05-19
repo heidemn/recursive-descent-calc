@@ -6,7 +6,7 @@
 const input = process.argv[2] || '42 + 43';
 let index = 0;
 
-type SymType = 'number' | 'plus' | 'minus' | 'mul' | 'div' | 'lparen' | 'rparen' | 'EOF';
+type SymType = 'number' | 'plus' | 'minus' | 'pow' | 'mul' | 'div' | 'lparen' | 'rparen' | 'EOF';
 interface Sym {
     type: SymType;
     value?: number | undefined;
@@ -27,6 +27,8 @@ function nextSym() {
         sym = {type: 'plus'};
     } else if (c === '-') {
         sym = {type: 'minus'};
+    } else if (c === '^') {
+        sym = {type: 'pow'};
     } else if (c === '*') {
         sym = {type: 'mul'};
     } else if (c === '/') {
@@ -76,9 +78,11 @@ function factor(): number {
 
 function term(): number {
     let v = factor();
-    while (sym.type == 'mul' || sym.type == 'div') {
+    while (sym.type == 'mul' || sym.type == 'div' || sym.type == 'pow') {
         nextSym();
-        if (prevSym.type === 'mul') {
+        if (prevSym.type === 'pow') {
+            v = Math.pow(v, term()); // TODO: Should have precedence over * and /.
+        } else if (prevSym.type === 'mul') {
             v *= term();
         } else {
             v /= term();
