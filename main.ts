@@ -90,7 +90,7 @@ function term(): number {
 function expression(): number {
     let sign = 1;
     if (sym.type == 'plus' || sym.type == 'minus') {
-        sign = prevSym.type === 'minus' ? (-1) : 1;
+        sign = sym.type === 'minus' ? (-1) : 1;
         nextSym();
     }
     let v = sign * term();
